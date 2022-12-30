@@ -1,0 +1,6 @@
+package scala
+
+class Oop {
+  
+
+}
