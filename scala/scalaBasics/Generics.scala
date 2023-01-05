@@ -1,4 +1,4 @@
-package scala
+package scalaBasics
 
 object Generics {
 

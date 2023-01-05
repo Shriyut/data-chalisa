@@ -1,4 +1,4 @@
-package scala
+package scalaBasics
 
 import scala.language.postfixOps //imported for syntactical sugar of postfix annotation
 

@@ -1,4 +1,4 @@
-package scala
+package scalaBasics
 
 object AbstractDataTypes {
   def main(args: Array[String]): Unit = {
