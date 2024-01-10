@@ -3,6 +3,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
 from airflow.utils.helpers import cross_downstream
+from airflow.models.baseoperator import cross_downstream, chain
 
 from datetime import datetime, timedelta
 
@@ -97,3 +98,8 @@ with DAG("my_dag_v_1_0_0", default_args=default_args, start_date=datetime(2021, 
     process_b >> clean_b
     process_c >> clean_c
     [process_a, process_b, process_c] >> store
+
+# example usage of cross downstream and chain functionality
+    # cross_downstream([extract_a, extract_b], [process_a, process_b, process_c])
+    # chain([process_a, process_b, process_c], [clean_a, clean_b, clean_c])
+    # cross_downstream([process_a, process_b, process_c], store)
