@@ -1,2 +1,6 @@
 Lab1: https://www.cloudskillsboost.google/focuses/18478?parent=catalog
 Lab2: https://www.cloudskillsboost.google/focuses/18476?parent=catalog
+Lab3: https://www.cloudskillsboost.google/focuses/22212?parent=catalog custom fields
+Lab4: https://www.cloudskillsboost.google/focuses/18475?parent=catalog derived tables
+Lab5: https://www.cloudskillsboost.google/focuses/18116?parent=catalog challenge lab
+Lab6: https://www.cloudskillsboost.google/focuses/18474?parent=catalog data groups caching

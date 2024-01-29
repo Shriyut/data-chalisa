@@ -17,10 +17,10 @@ with DAG(
     create_table_task = BigQueryCreateEmptyTableOperator(
         task_id="create_test_table",
         dataset_id="testdataset",
-        table_id="test_table",
+        table_id="abc_table",
         schema_fields=[
-            {"name": "column1", "type": "STRING", "mode": "NULLABLE"},
-            {"name": "column2", "type": "STRING", "mode": "NULLABLE"},
-            {"name": "column3", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "time", "type": "DATETIME", "mode": "NULLABLE"},
+            {"name": "desc", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "event", "type": "STRING", "mode": "NULLABLE"},
         ],
     )
