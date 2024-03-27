@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: gcp-pubsub
+  namespace: argo
+spec:
+  template:
+    container:
+      resources:
+        requests:
+          cpu: 5m
+          memory: 50Mi
+        limits:
+          cpu: 10m
+          memory: 50Mi
+    serviceAccountName: argo-events-ksa
+  pubSub:
+    example:
+      jsonBody: true
+      projectID: gke-expeiments
+      # (optional) GCP project ID for the topic.
+      # By default, it is same as ProjectID.
+      # topicProjectID: "project-id"
+      topic: cme-notification-topic
+      # (optional) ID of subscription.
+      # Required if you use existing subscription.
+      # The default value will be auto generated hash based on this eventsource setting, so the subscription
+      # might be recreated every time you update the setting, which has a possibility of event loss.
+      subscriptionID: cme-notification-topic-sub
+      # (optional) Refers to a k8s secret which contains the credential JSON to access pubsub.
+      # If it is missing, it implicitly uses Workload Identity.
+      #credentialSecret:
+      #  name: argo-sa-json
+      #  key: creds

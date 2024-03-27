@@ -1,0 +1,99 @@
+curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.5.5/argo-linux-amd64.gz
+gunzip argo-linux-amd64.gz
+chmod +x argo-linux-amd64
+sudo mv ./argo-linux-amd64 /usr/local/bin/argo
+argo version
+gcloud container clusters get-credentials argo-cme-public-cluster --region us-central1 --project gke-expeiments
+kubectl apply -f deloitte-argo.yaml -n argo
+argo submit -n argo hello.yaml --serviceaccount argo
+For public GKE cluster:
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install -n argo nginx-ingress ingress-nginx/ingress-nginx
+
+kubectl get deployment -n argo nginx-ingress-ingress-nginx-controller
+kubectl get service -n argo nginx-ingress-ingress-nginx-controller
+
+kubectl apply -f ingress.yaml
+
+kubectl get ingresses -n argo
+
+<ip>/argo
+
+kubectl create role jenkins --verb=list,update --resource=workflows.argoproj.io
+kubectl create sa jenkins
+kubectl create rolebinding jenkins --role=jenkins --serviceaccount=argo:jenkins
+    kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jenkins.service-account-token
+  annotations:
+    kubernetes.io/service-account.name: jenkins
+type: kubernetes.io/service-account-token
+EOF
+
+ARGO_TOKEN="Bearer $(kubectl get secret jenkins.service-account-token -o=jsonpath='{.data.token}' | base64 --decode)"
+echo $ARGO_TOKEN
+
+
+
+docker pull quay.io/argoproj/workflow-controller:v3.5.5
+docker pull quay.io/argoproj/argocli:v3.5.5
+docker pull quay.io/argoproj/argoexec:v3.5.5
+docker pull quay.io/argoproj/argo-events:v1.9.0
+docker pull natsio/prometheus-nats-exporter:0.9.1
+
+docker tag quay.io/argoproj/argocli:v3.5.5 us-central1-docker.pkg.dev/gke-expeiments/cme-setup/quay.io/argoproj/argocli:v3.5.5
+docker tag quay.io/argoproj/workflow-controller:v3.5.5 us-central1-docker.pkg.dev/gke-expeiments/cme-setup/quay.io/argoproj/workflow-controller:v3.5.5
+docker tag quay.io/argoproj/argoexec:v3.5.5 us-central1-docker.pkg.dev/gke-expeiments/cme-setup/quay.io/argoproj/argoexec:v3.5.5
+docker tag quay.io/argoproj/argo-events:v1.9.0 us-central1-docker.pkg.dev/gke-expeiments/cme-setup/quay.io/argoproj/argo-events:v1.9.0
+
+docker tag natsio/prometheus-nats-exporter:0.9.1 us-central1-docker.pkg.dev/gke-expeiments/cme-setup/natsio/prometheus-nats-exporter:0.9.1
+docker push us-central1-docker.pkg.dev/gke-expeiments/cme-setup/natsio/prometheus-nats-exporter:0.9.1
+
+docker push us-central1-docker.pkg.dev/gke-expeiments/cme-setup/quay.io/argoproj/argocli:v3.5.5
+docker push us-central1-docker.pkg.dev/gke-expeiments/cme-setup/quay.io/argoproj/workflow-controller:v3.5.5
+docker push us-central1-docker.pkg.dev/gke-expeiments/cme-setup/quay.io/argoproj/argoexec:v3.5.5
+docker push us-central1-docker.pkg.dev/gke-expeiments/cme-setup/quay.io/argoproj/argo-events:v1.9.0
+
+docker pull docker/whalesay:latest
+
+docker tag docker/whalesay:latest us-central1-docker.pkg.dev/gke-expeiments/cme-setup/docker/whalesay:latest
+docker push us-central1-docker.pkg.dev/gke-expeiments/cme-setup/docker/whalesay:latest
+kubectl apply -n argo -f install.yaml
+
+kubectl apply -n argo -f https://github.com/argoproj/argo-workflows/releases/download/v3.5.5/install.yaml
+
+kubectl create namespace argo
+kubectl apply -n argo -f https://github.com/argoproj/argo-workflows/releases/download/v3.5.5/quick-start-minimal.yaml
+wget https://github.com/argoproj/argo-workflows/releases/download/v3.5.5/quick-start-minimal.yaml
+
+
+docker pull natsio/nats-server-config-reloader:0.7.0
+docker tag natsio/nats-server-config-reloader:0.7.0 us-central1-docker.pkg.dev/gke-expeiments/cme-setup/natsio/nats-server-config-reloader:0.7.0
+docker push us-central1-docker.pkg.dev/gke-expeiments/cme-setup/natsio/nats-server-config-reloader:0.7.0
+
+https://argoproj.github.io/argo-events/quick_start/
+
+gcloud iam service-accounts add-iam-policy-binding owner-gke-argo@gke-expeiments.iam.gserviceaccount.com \
+    --role roles/iam.workloadIdentityUser \
+    --member "serviceAccount:gke-expeiments.svc.id.goog[argo/argo-events-ksa]"
+
+kubectl apply -f argo-events.yaml -n argo
+kubectl apply -f eventbus.yaml -n argo
+kubectl apply -f ksa.yaml -n argo
+kubectl apply -f pubsub-eventsource.yaml -n argo
+kubectl apply -f pubsub-eventsensor.yaml -n argo
+
+https://medium.com/@rupertcarr/deploying-an-argo-workflow-on-gke-and-accessing-the-argo-ui-bf7677e9fd7a
+https://medium.com/google-cloud/using-argo-events-with-pub-sub-to-trigger-kubernetes-jobs-in-google-cloud-e712035ce42d
+
+
+argo submit check-bigquery-partition.yaml \
+  -p project_id=<your_project_id> \
+  -p dataset_id=<your_dataset_id> \
+  -p table_name=<your_table_name> \
+  -p partition_filter="<optional_partition_filter>"
+argo submit bigquery-join.yaml -p table1='project.dataset.table1' -p table2='project.dataset.table2' -p column1='column1' -p column2='column2' -p join_condition='t1.column3 = t2.column3'
+

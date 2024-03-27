@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: bigquery-join-
+  namespace: argo
+spec:
+  entrypoint: bigquery-join
+  serviceAccountName: argo-events-ksa
+  templates:
+    - name: bigquery-join
+      steps:
+        - - name: run-join
+            template: python-script
+            arguments:
+              parameters:
+                - name: table1
+                  value: "{{workflow.parameters.table1}}"
+                - name: table2
+                  value: "{{workflow.parameters.table2}}"
+                - name: column1
+                  value: "{{workflow.parameters.column1}}"
+                - name: column2
+                  value: "{{workflow.parameters.column2}}"
+                - name: join_condition
+                  value: "{{workflow.parameters.join_condition}}"
+                - name: run_date
+                  value: "{{workflow.parameters.run_date}}"
+
+    - name: python-script
+      inputs:
+        parameters:
+          - name: table1
+          - name: table2
+          - name: column1
+          - name: column2
+          - name: join_condition
+          - name: run_date
+      script:
+        image: us-central1-docker.pkg.dev/gke-expeiments/cme-setup/testimage:latest
+        command: [python]
+        resources:
+          requests:
+            cpu: 0.5
+            memory: 100Mi
+        source: |
+          from google.cloud import bigquery
+          client = bigquery.Client()
+          
+          table1 = "{{inputs.parameters.table1}}"
+          table2 = "{{inputs.parameters.table2}}"
+          column1 = "{{inputs.parameters.column1}}"
+          column2 = "{{inputs.parameters.column2}}"
+          join_condition = "{{inputs.parameters.join_condition}}"
+          run_date = "{{inputs.parameters.run_date}}"
+          
+          query = f"SELECT * FROM `{table1}` t1 JOIN `{table2}` t2 ON t1.`{column1}` = t2.`{column2}` AND {join_condition}"
+          query_job = client.query(query)
+          results = query_job.result()
+          print (f"`{column1}` ON `{run_date}`")
+          
+          for row in results:
+            print(row)
