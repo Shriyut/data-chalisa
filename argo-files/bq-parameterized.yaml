@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: bigquery-join-
+  generateName: cme-data-curation-
   namespace: argo
 spec:
   entrypoint: bigquery-join
@@ -58,9 +58,8 @@ spec:
           destination_table = "{{inputs.parameters.destination_table}}"
           
           query = f"SELECT t1.GUID, t2.UNDERLYING_GUID FROM `{table1}` t1 JOIN `{table2}` t2 ON t1.`{column1}` = t2.`{column2}` AND {join_condition}"
-          write_disposition = bigquery.WriteDisposition.WRITE_APPEND 
           table_ref = client.dataset(destination_dataset).table(destination_table)
-          job_config = bigquery.QueryJobConfig(destination=table_ref, write_disposition=write_disposition)
+          job_config = bigquery.QueryJobConfig(destination=table_ref)
           query_job = client.query(query, job_config=job_config)
           results = query_job.result()
           

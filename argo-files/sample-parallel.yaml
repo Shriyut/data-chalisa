@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: parallel-steps-
+spec:
+  entrypoint: main
+  templates:
+    - name: main
+      steps:
+        - - name: pre-step
+            template: whalesay
+        - - name: A
+            template: whalesay-xyz
+          - name: B
+            template: whalesay-xyz
+        - - name: post-step
+            template: whalesay
+    - name: whalesay
+      container:
+        image: docker/whalesay:latest
+        command: [cowsay]
+        args: ["hello world"]
+    - name: whalesay-xyz
+      container:
+        image: docker/whalesay:latest
+        command: [cowsay]
+        args: ["hixyz"]
