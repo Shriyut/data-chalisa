@@ -17,7 +17,20 @@ rules:
     verbs: ["get","list","watch","create","update","patch","delete"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
+metadata:
+  name: executor
+rules:
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflowtaskresults
+    verbs:
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
   name: argo-basic-role
 rules:
@@ -93,7 +106,7 @@ roleRef:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: role-argo-cluster-ksa-binding
+  name: role-argo-executor-ksa-binding
   namespace: argo
 subjects:
   - kind: ServiceAccount
@@ -101,8 +114,22 @@ subjects:
     namespace: argo
 roleRef:
   kind: Role
-  name: argo-cluster-role
+  name: executor
   apiGroup: rbac.authorization.k8s.io
+#---
+#kind: RoleBinding
+#apiVersion: rbac.authorization.k8s.io/v1
+#metadata:
+# name: role-argo-cluster-ksa-binding
+# namespace: argo
+#subjects:
+#- kind: ServiceAccount
+#  name: argo-events-ksa
+#  namespace: argo
+#roleRef:
+# kind: Role
+# name: argo-cluster-role
+# apiGroup: rbac.authorization.k8s.io
 #---
 #kind: RoleBinding
 #apiVersion: rbac.authorization.k8s.io/v1

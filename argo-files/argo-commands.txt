@@ -80,14 +80,21 @@ gcloud iam service-accounts add-iam-policy-binding owner-gke-argo@gke-expeiments
     --role roles/iam.workloadIdentityUser \
     --member "serviceAccount:gke-expeiments.svc.id.goog[argo/argo-events-ksa]"
 
+kubectl apply -f argo-setup.yaml -n argo
 kubectl apply -f argo-events.yaml -n argo
 kubectl apply -f eventbus.yaml -n argo
 kubectl apply -f ksa.yaml -n argo
 kubectl apply -f pubsub-eventsource.yaml -n argo
 kubectl apply -f pubsub-eventsensor.yaml -n argo
 
+kubectl taint nodes --all node-role.kubernetes.io/master
+
 https://medium.com/@rupertcarr/deploying-an-argo-workflow-on-gke-and-accessing-the-argo-ui-bf7677e9fd7a
 https://medium.com/google-cloud/using-argo-events-with-pub-sub-to-trigger-kubernetes-jobs-in-google-cloud-e712035ce42d
+https://medium.com/@lingxiankong/best-practice-of-using-argo-workflows-3162708f1bd5
+https://pipekit.io/blog/exit-handlers-argo-workflows-trigger-notifications-part-2
+6F86MSP62714WN7QZZA15CD3
+
 
 
 argo submit check-bigquery-partition.yaml \
@@ -101,3 +108,7 @@ argo submit bigquery-join.yaml -p table1='project.dataset.table1' -p table2='pro
 argo submit join.yaml -n argo -p table1='gke-expeiments.landing_zone.t_lz_instrument' -p table2='gke-expeiments.landing_zone.t_lz_option_series' -p column1='run_date' -p column2='run_date' -p join_condition='t1.GUID = t2.UNDERLYING_GUID' -p destination_dataset='curated_zone' -p destination_table='t_flat_instrument_simulated' --watch
 
 argo submit join.yaml -n argo -p table1='gke-expeiments.landing_zone.t_lz_instrument' -p table2='gke-expeiments.landing_zone.t_lz_option_series' -p column1='run_date' -p column2='run_date' -p join_condition='t1.GUID = t2.UNDERLYING_GUID' -p destination_dataset='curated_zone' -p destination_table='t_flat_instrument_simulated' --watch
+
+argo submit newbq.yaml -n argo -p table1='gke-expeiments.landing_zone.t_lz_instrument' -p table2='gke-expeiments.landing_zone.t_lz_option_series' -p column1='run_date' -p column2='run_date' -p join_condition='t1.GUID = t2.UNDERLYING_GUID' -p destination_dataset='curated_zone' -p destination_table='t_flat_instrument_simulated' -p partition_column='run_date' -p partition_value='2024-03-26' -p processing_zone_table='processing_zone.t_pz_instrument' --watch
+
+argo submit bq.yaml -n argo -p table1='gke-expeiments.landing_zone.t_lz_instrument' -p table2='gke-expeiments.landing_zone.t_lz_option_series' -p column1='run_date' -p column2='run_date' -p join_condition='t1.GUID = t2.UNDERLYING_GUID' -p destination_dataset='curated_zone' -p destination_table='t_flat_instrument_simulated' -p partition_column='run_date' -p partition_value='2024-03-26' -p processing_zone_table='processing_zone.t_pz_instrument' -p view_name="v_ins_fno" --watch
