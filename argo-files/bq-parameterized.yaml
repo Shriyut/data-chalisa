@@ -109,10 +109,13 @@ spec:
           view_ref = client.dataset(destination_dataset).table(view_name)
           
           view_query = f"SELECT GUID, UNDERLYING_GUID, option_type, run_date FROM `{destination_dataset}.{destination_table}` "
-          view_creation_obj = bigquery.Table(view_ref)
-          view_creation_obj.view_query = view_query
-          view_creation_obj.view_use_legacy_sql = False
-          client.create_table(view_creation_obj)
+          try:
+            view_creation_obj = bigquery.Table(view_ref)
+            view_creation_obj.view_query = view_query
+            view_creation_obj.view_use_legacy_sql = False
+            client.create_table(view_creation_obj)
+          except Exception as e:
+            print("View already exists")
     - name: check-table-data
       inputs:
         parameters:

@@ -9,6 +9,12 @@ spec:
   templates:
     - name: bigquery-join
       steps:
+        - - name: process-pubsub-msg
+            template: pubsub-msg-processing
+            arguments:
+              parameters:
+                - name: pubsub_msg
+                  value: "{{workflow.parameters.pubsub_msg}}"
         - - name: check-processing-zone
             template: check-table-data
             arguments:
@@ -109,16 +115,21 @@ spec:
           view_ref = client.dataset(destination_dataset).table(view_name)
           
           view_query = f"SELECT GUID, UNDERLYING_GUID, option_type, run_date FROM `{destination_dataset}.{destination_table}` "
-          view_creation_obj = bigquery.Table(view_ref)
-          view_creation_obj.view_query = view_query
-          view_creation_obj.view_use_legacy_sql = False
-          client.create_table(view_creation_obj)
+          try:
+            view_creation_obj = bigquery.Table(view_ref)
+            view_creation_obj.view_query = view_query
+            view_creation_obj.view_use_legacy_sql = False
+            client.create_table(view_creation_obj)
+          except Exception as e:
+            print("Either the view already exists or some other error ")
     - name: check-table-data
       inputs:
         parameters:
           - name: partition_column
           - name: partition_value
           - name: processing_zone_table
+          - name: ingested_rundate
+            value: "{{workflow.outputs.parameters.run_date}}"
       script:
         image: us-central1-docker.pkg.dev/gke-expeiments/cme-setup/testimage:latest
         command: [python]
@@ -133,8 +144,10 @@ spec:
           partition_column = "{{inputs.parameters.partition_column}}"
           partition_value = "{{inputs.parameters.partition_value}}"
           processing_zone_table = "{{inputs.parameters.processing_zone_table}}"
+          ingested_run_date = "{{inputs.parameters.ingested_rundate}}"
+          print('{{inputs.parameters.ingested_rundate}}')
           
-          query = f"SELECT COUNT(1) FROM `{processing_zone_table}` where {partition_column}='{partition_value}'"
+          query = f"SELECT COUNT(1) FROM `{processing_zone_table}` where {partition_column}='{ingested_run_date}'"
           print(query)
           query_job = client.query(query)
           results = query_job.result()
@@ -150,3 +163,33 @@ spec:
               print(f"Processing zone table is empty.")
           else:
             print(f"Error: Couldn't retrieve data from processing zone table.")
+    - name: pubsub-msg-processing
+      inputs:
+        parameters:
+          - name: pubsub_msg
+      script:
+        image: us-central1-docker.pkg.dev/gke-expeiments/cme-setup/testimage:latest
+        command: [python]
+        resources:
+          requests:
+            cpu: 0.5
+            memory: 100Mi
+        source: |
+          from google.cloud import bigquery
+          import json
+          import os
+          
+          output_file_path = "/tmp/run_date.txt"
+          pubsub_msg = '{{inputs.parameters.pubsub_msg}}'
+          msg_obj = json.loads(pubsub_msg)
+          print(msg_obj["run_date"])
+          run_date = msg_obj["run_date"]
+          with open(output_file_path, "w") as file:
+            print("Writing run_Date to output file")
+            file.write(run_date)
+      outputs:
+        parameters:
+          - name: run_date
+            valueFrom:
+              path: /tmp/run_date.txt
+            globalName: run_date
