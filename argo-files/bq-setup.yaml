@@ -1,21 +1,97 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: python-script-
+  generateName: cme-datacuration-
+  namespace: argo
 spec:
-  entrypoint: run-python-script
+  entrypoint: perform-curation
   serviceAccountName: argo-events-ksa
-  arguments:
-    parameters:
-      - name: sql_file_path
-        value: "{{workflow.parameters.sql_file_path}}"
-
   templates:
+    - name: perform-curation
+      steps:
+        - - name: process-pubsub-msg
+            template: pubsub-msg-processing
+            arguments:
+              parameters:
+                - name: pubsub_msg
+                  value: "{{workflow.parameters.pubsub_msg}}"
+        - - name: check-processing-zone
+            template: check-table-data
+            arguments:
+              parameters:
+                - name: partition_column
+                  value: "{{workflow.parameters.partition_column}}"
+                - name: processing_zone_table
+                  value: "{{workflow.parameters.processing_zone_table}}"
+        - - name: run-join
+            template: run-python-script
+            arguments:
+              parameters:
+                - name: sql_file_path
+                  value: "{{workflow.parameters.sql_file_path}}"
+                - name: python_file_path
+                  value: "/app/bq_transform.py"
+                - name: destination_dataset
+                  value: "{{workflow.parameters.destination_dataset}}"
+                - name: destination_table
+                  value: "{{workflow.parameters.destination_table}}"
+        - - name: create-cz-view
+            template: create-curated-zone-view
+            arguments:
+              parameters:
+                - name: view_sql_file_path
+                  value: "{{workflow.parameters.view_sql_file_path}}"
+                - name: python_file_path
+                  value: "/app/create_view.py"
+                - name: view_name
+                  value: "{{workflow.parameters.view_name}}"
+                - name: destination_dataset
+                  value: "{{workflow.parameters.destination_dataset}}"
+
     - name: run-python-script
       inputs:
         parameters:
-          - name: sql_file_path
+            - name: sql_file_path
+            - name: python_file_path
+            - name: destination_dataset
+            - name: destination_table
       container:
         image: us-central1-docker.pkg.dev/gke-expeiments/cme-setup/baseimage:latest
-        command: [python3]
-        args: ["/app/bq_transform.py", "{{inputs.parameters.sql_file_path}}"]
+        command: [ python3 ]
+        args: [ "{{inputs.parameters.python_file_path}}", "{{inputs.parameters.sql_file_path}}", "{{inputs.parameters.destination_dataset}}", "{{inputs.parameters.destination_table}}" ]
+    - name: check-table-data
+      inputs:
+        parameters:
+          - name: partition_column
+          - name: processing_zone_table
+          - name: ingested_rundate
+            value: "{{workflow.outputs.parameters.run_date}}"
+      container:
+        image: us-central1-docker.pkg.dev/gke-expeiments/cme-setup/baseimage:latest
+        command: [ python3 ]
+        args: [ "/app/pz_table_check.py", "{{inputs.parameters.partition_column}}", "{{inputs.parameters.processing_zone_table}}", "{{inputs.parameters.ingested_rundate}}" ]
+    - name: pubsub-msg-processing
+      inputs:
+        parameters:
+          - name: pubsub_msg
+      container:
+        image: us-central1-docker.pkg.dev/gke-expeiments/cme-setup/baseimage:latest
+        command: [ python3 ]
+        args: [ "/app/pubsub_extract.py", "{{inputs.parameters.pubsub_msg}}" ]
+      outputs:
+        parameters:
+          - name: run_date
+            valueFrom:
+              path: /tmp/run_date.txt
+            globalName: run_date
+    - name: create-curated-zone-view
+      inputs:
+        parameters:
+          - name: view_sql_file_path
+          - name: python_file_path
+          - name: view_name
+          - name: destination_dataset
+      container:
+        image: us-central1-docker.pkg.dev/gke-expeiments/cme-setup/baseimage:latest
+        command: [ python3 ]
+        args: [ "{{inputs.parameters.python_file_path}}", "{{inputs.parameters.view_sql_file_path}}" , "{{inputs.parameters.view_name}}" , "{{inputs.parameters.destination_dataset}}" ]

@@ -115,4 +115,5 @@ argo submit bq.yaml -n argo -p table1='gke-expeiments.landing_zone.t_lz_instrume
 
 argo submit newbq.yaml -n argo -p table1='gke-expeiments.landing_zone.t_lz_instrument' -p table2='gke-expeiments.landing_zone.t_lz_option_series' -p column1='run_date' -p column2='run_date' -p join_condition='t1.GUID = t2.UNDERLYING_GUID' -p destination_dataset='curated_zone' -p destination_table='t_flat_instrument_simulated' -p partition_column='run_date' -p partition_value='2024-03-26' -p processing_zone_table='processing_zone.t_pz_instrument' -p view_name="v_ins_fno" -p pubsub_msg="{\"run_date\":\"2024-03-26\"}" --watch
 
-argo submit testbq.yaml -n argo -p sql_file_path='/app/inst_sample.sql' --watch
+argo submit workflow.yaml -n argo -p sql_file_path='/app/inst_sample.sql' -p pubsub_msg="{\"run_date\":\"2024-03-26\"}" -p partition_column="run_date" -p processing_zone_table="processing_zone.t_pz_instrument" -p view_sql_file_path='/app/inst_view.sql' -p view_name='v_instrument_fno' -p destination_dataset='curated_zone' -p destination_table='t_flat_instrument_simulated' --watch
+
