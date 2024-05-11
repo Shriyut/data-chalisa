@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: gcloud-bq-session-
+spec:
+  entrypoint: gcloud-bq-session
+  serviceAccountName: argo-events-ksa
+  templates:
+    - name: gcloud-bq-session
+      steps:
+        - - name: create-bq-session
+            template: gcloud
+        #     bq query --nouse_legacy_sql --create_session --location 'us-central1' 'SELECT * FROM  `gke-expeiments.curated_zone.t_flat_instrument_simulated`;'
+        # us-central1-docker.pkg.dev/gke-expeiments/cme-setup/google:latest
+        # bq query --nouse_legacy_sql --create_session --location 'us-central1' < query.sql
+        # valuestest is the temp table created as part of session
+        # bq query --nouse_legacy_sql --session_id=ChAKDmdrZS1leHBlaW1lbnRzEG4aJDY0M2E5MmE3LWJhMWEtNDUyMy1iZWRiLTI1ZjUwYjc2ZGRmOQ== 'SELECT * FROM valuestest'
+        # query.sql - CREATE TEMP TABLE valuestest(GUID STRING) AS SELECT GUID FROM `gke-expeiments.curated_zone.t_flat_instrument_simulated`
+        # CREATE TEMP TABLE valuestest(GUID STRING, UNDERLYING_GUID STRING) AS SELECT GUID, UNDERLYING_GUID FROM `gke-expeiments.curated_zone.t_flat_instrument_simulated`
+        # bq query --nouse_legacy_sql --session_id=ChAKDmdrZS1leHBlaW1lbnRzEG4aJDdjYmMyNTJjLTlhYWUtNGZlOC05MDdmLTIxNzIzMjc5ZDcxYw== --destination_table='gke-expeiments:curated_zone.test' --append_table=true 'SELECT * FROM src'
+        # bq query --nouse_legacy_sql --parameter=run_date:DATE:'2024-03-26' < sample.sql
+    - name: gcloud
+      container:
+        image: us-central1-docker.pkg.dev/gke-expeiments/cme-setup/google:latest
+        command: [bash, -c]
+        args:
+          - |
+            gcloud auth activate-service-account --key-file=/owner.json
+            gcloud config set project gke-expeiments
+            bq query --nouse_legacy_sql --create_session --location 'us-central1' 'SELECT * FROM  `gke-expeiments.curated_zone.t_flat_instrument_simulated`;'
