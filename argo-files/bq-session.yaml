@@ -17,7 +17,7 @@ spec:
         # bq query --nouse_legacy_sql --session_id=ChAKDmdrZS1leHBlaW1lbnRzEG4aJDY0M2E5MmE3LWJhMWEtNDUyMy1iZWRiLTI1ZjUwYjc2ZGRmOQ== 'SELECT * FROM valuestest'
         # query.sql - CREATE TEMP TABLE valuestest(GUID STRING) AS SELECT GUID FROM `gke-expeiments.curated_zone.t_flat_instrument_simulated`
         # CREATE TEMP TABLE valuestest(GUID STRING, UNDERLYING_GUID STRING) AS SELECT GUID, UNDERLYING_GUID FROM `gke-expeiments.curated_zone.t_flat_instrument_simulated`
-        # bq query --nouse_legacy_sql --session_id=ChAKDmdrZS1leHBlaW1lbnRzEG4aJDdjYmMyNTJjLTlhYWUtNGZlOC05MDdmLTIxNzIzMjc5ZDcxYw== --destination_table='gke-expeiments:curated_zone.test' --append_table=true 'SELECT * FROM src'
+        # --nouse-le
         # bq query --nouse_legacy_sql --parameter=run_date:DATE:'2024-03-26' < sample.sql
     - name: gcloud
       container:

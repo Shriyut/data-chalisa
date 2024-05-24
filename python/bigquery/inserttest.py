@@ -44,6 +44,7 @@ def insert_records():
         # ]
     )
     write_query_job = client.query(query, job_config=write_job_config, location='us-central1')
+    write_query_job.result()
     print("End time: "+str(datetime.now()))
 
 
