@@ -1,0 +1,3 @@
+[submodule "python/basic/epi/soln/EPIJudge"]
+	path = python/basic/epi/soln/EPIJudge
+	url = https://github.com/adnanaziz/EPIJudge.git
