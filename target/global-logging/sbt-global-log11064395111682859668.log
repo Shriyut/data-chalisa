@@ -1,0 +1,8 @@
+[debug] > Exec(scala, Some(52bce4e1-fe35-48a4-8ec5-ae7c7fafdbb2), Some(CommandSource(console0)))
+[error] Not a valid command: scala (similar: alias, last, eval)
+[error] Not a valid project ID: scala
+[error] Expected ':'
+[error] Not a valid key: scala (similar: scalaHome, scalaSource, clean)
+[error] scala
+[error]      ^
+[debug] > Exec(shell, None, None)

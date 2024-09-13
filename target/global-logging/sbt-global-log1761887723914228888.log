@@ -1,0 +1,87 @@
+[debug] > Exec(early(addDefaultCommands), None, None)
+[debug] > Exec(addDefaultCommands, None, None)
+[debug] > Exec(early(initialize), None, None)
+[debug] > Exec(initialize, None, None)
+[debug] > Exec(boot, None, None)
+[debug] > Exec(writeSbtVersion, None, None)
+[debug] > Exec(reload, None, None)
+[debug] > Exec(sbtStashOnFailure, None, None)
+[debug] > Exec(onFailure loadFailed, None, None)
+[debug] > Exec(loadp, None, None)
+[info] welcome to sbt 1.9.7 (Oracle Corporation Java 17.0.12)
+[debug] Load.defaultLoad until apply took 605.4759ms
+[debug]           Load.loadUnit: plugins took 113.3207ms
+[debug]           Load.loadUnit: defsScala took 0.2408ms
+[debug] [Loading] Scanning directory C:\Users\shrijha\IdeaProjects\data-chalisa\project
+[debug] [Loading] Found non-root projects 
+[debug] [Loading] Done in C:\Users\shrijha\IdeaProjects\data-chalisa\project, returning: ()
+[debug] deducing auto plugins based on known facts Set(Atom(sbt.plugins.CorePlugin)) and clauses Clauses(Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.IvyPlugin)))
+[debug] Clause(Atom(sbt.ScriptedPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.SbtPlugin),Set(Atom(sbt.ScriptedPlugin)))
+[debug] Clause(Atom(sbt.plugins.SemanticdbPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.JUnitXmlReportPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.MiniDependencyTreePlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.IvyPlugin)))
+[debug] Clause(Atom(sbt.plugins.IvyPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.SemanticdbPlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.JUnitXmlReportPlugin)))
+[debug] Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.Giter8TemplatePlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.MiniDependencyTreePlugin))))
+[debug]   :: deduced result: Matched(sbt.plugins.CorePlugin,sbt.plugins.Giter8TemplatePlugin,sbt.plugins.IvyPlugin,sbt.plugins.JvmPlugin,sbt.plugins.MiniDependencyTreePlugin,sbt.plugins.JUnitXmlReportPlugin,sbt.plugins.SemanticdbPlugin)
+[debug] Plugins.deducer#function took 22.2236 ms
+[debug]               Load.resolveProject(data-chalisa-build) took 46.3123ms
+[debug]             Load.loadTransitive: finalizeProject(Project(id data-chalisa-build, base: C:\Users\shrijha\IdeaProjects\data-chalisa\project, plugins: List(<none>))) took 84.6643ms
+[debug] [Loading] Done in C:\Users\shrijha\IdeaProjects\data-chalisa\project, returning: (data-chalisa-build)
+[debug]           Load.loadUnit: loadedProjectsRaw took 108.8143ms
+[debug]           Load.loadUnit: cleanEvalClasses took 0.3369ms
+[debug]         Load.loadUnit(file:/C:/Users/shrijha/IdeaProjects/data-chalisa/project/, ...) took 228.0218ms
+[debug]       Load.apply: load took 361.3312ms
+[debug]       Load.apply: resolveProjects took 4.7183ms
+[debug]       Load.apply: finalTransforms took 76.2632ms
+[debug]       Load.apply: config.delegates took 20.068ms
+[debug]       Load.apply: Def.make(settings)... took 828.3475ms
+[debug]       Load.apply: structureIndex took 205.7937ms
+[debug]       Load.apply: mkStreams took 8.4802ms
+[info] loading project definition from C:\Users\shrijha\IdeaProjects\data-chalisa\project
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[debug]     Load.loadUnit: plugins took 2696.5746ms
+[debug]     Load.loadUnit: defsScala took 0.004ms
+[debug] [Loading] Scanning directory C:\Users\shrijha\IdeaProjects\data-chalisa
+[debug] [Loading] Found non-root projects 
+[debug] [Loading] Done in C:\Users\shrijha\IdeaProjects\data-chalisa, returning: ()
+[debug] deducing auto plugins based on known facts Set(Atom(sbt.plugins.CorePlugin)) and clauses Clauses(Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.IvyPlugin)))
+[debug] Clause(Atom(sbt.ScriptedPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.SbtPlugin),Set(Atom(sbt.ScriptedPlugin)))
+[debug] Clause(Atom(sbt.plugins.SemanticdbPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.JUnitXmlReportPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.MiniDependencyTreePlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.IvyPlugin)))
+[debug] Clause(Atom(sbt.plugins.IvyPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.SemanticdbPlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.JUnitXmlReportPlugin)))
+[debug] Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.Giter8TemplatePlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.MiniDependencyTreePlugin))))
+[debug]   :: deduced result: Matched(sbt.plugins.CorePlugin,sbt.plugins.Giter8TemplatePlugin,sbt.plugins.IvyPlugin,sbt.plugins.JvmPlugin,sbt.plugins.MiniDependencyTreePlugin,sbt.plugins.JUnitXmlReportPlugin,sbt.plugins.SemanticdbPlugin)
+[debug] Plugins.deducer#function took 2.7641 ms
+[debug]         Load.resolveProject(data-chalisa) took 1.2675ms
+[debug]       Load.loadTransitive: finalizeProject(Project(id data-chalisa, base: C:\Users\shrijha\IdeaProjects\data-chalisa, plugins: List(<none>))) took 4.4267ms
+[debug] [Loading] Done in C:\Users\shrijha\IdeaProjects\data-chalisa, returning: (data-chalisa)
+[debug]     Load.loadUnit: loadedProjectsRaw took 6.1003ms
+[debug]     Load.loadUnit: cleanEvalClasses took 0.0147ms
+[debug]   Load.loadUnit(file:/C:/Users/shrijha/IdeaProjects/data-chalisa/, ...) took 2705.7502ms
+[debug] Load.apply: load took 2777.5906ms
+[debug] Load.apply: resolveProjects took 0.1008ms
+[debug] Load.apply: finalTransforms took 6.2932ms
+[debug] Load.apply: config.delegates took 0.3032ms
+[debug] Load.apply: Def.make(settings)... took 67.8023ms
+[debug] Load.apply: structureIndex took 26.7765ms
+[debug] Load.apply: mkStreams took 0.004ms
+[info] set current project to data-chalisa (in build file:/C:/Users/shrijha/IdeaProjects/data-chalisa/)
+[debug] > Exec(sbtPopOnFailure, None, None)
+[debug] > Exec(resumeFromFailure, None, None)
+[debug] > Exec(notifyUsersAboutShell, None, None)
+[debug] > Exec(iflast shell, None, None)
+[debug] > Exec(shell, None, None)
+[info] sbt server started at local:sbt-server-826f1d5a79706b90454e
+[debug] Writing bsp connection file
+[info] started sbt server

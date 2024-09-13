@@ -1,0 +1,13 @@
+val record="2014-03-15:10:10:31,Titanic 4000,1882b564-c7e0-4315-aa24 228c0155ee1b,58,36,39,31,15,0,TRUE,enabled,enabled,40.6 9206648,-119.4216429"
+
+Q1.  Print out the record and the length of the record. The length should be 132 characters.
+Q2. Use the contains method to determine whether the model name (Titanic) is in the record.
+Q3. Use indexOf to locate the index of the first character of Titanic.
+Q4. Use the substring method to assign the model name to a new variable called name.
+Q5.  Use the toUpperCase method to turn the name into uppercase
+
+. Booleans
+Q1. Extract the Bluetooth and Wifi fields from the record string. Each field can contain three values: enabled, disabled, and connected.
+Q2. Find the start of the first field with indexOf, then use substring to extract the string into new val bluetooth.
+Q3. Use indexOf with the position starting parameter to find the next instance and extract it into new val wifi.
+Q4. Use == to determine if Bluetooth and Wifi are ON and print the results.
