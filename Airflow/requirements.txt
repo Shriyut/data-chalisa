@@ -1,0 +1,4 @@
+apache-airflow==3.0.0
+
+opentelemetry-semantic-conventions==0.50b0
+structlog>=25.2.0
