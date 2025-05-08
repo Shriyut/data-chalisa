@@ -1,0 +1,38 @@
+{
+  "item": {
+    "value": "My name is Alicia Abernathy, and my email address is aabernathy@example.com."
+  },
+  "deidentifyConfig": {
+    "infoTypeTransformations": {
+      "transformations": [
+        {
+          "infoTypes": [
+            {
+              "name": "EMAIL_ADDRESS"
+            }
+          ],
+          "primitiveTransformation": {
+            "cryptoDeterministicConfig": {
+              "cryptoKey": {
+                "kmsWrapped": {
+                  "cryptoKeyName": "projects/us-gcp-ame-con-ff12d-npd-1/locations/global/keyRings/keyring-dip/cryptoKeys/dlp-kms-key",
+                  "wrappedKey": "CiQAyHYOXhnCOrF5mPdZMiRMXGCi72WrEBJdwk9qxLmQfOifPzUSSQBxGTtDrghgk/Pp1XsSAKRg6pezaJcMfi3iJV1451hUT32IE3KMHV7dkgZDtDv9lomXXaLfMuS3Dklh6pt+UuCJzZbWXp5cICo="
+                }
+              },
+              "surrogateInfoType": {
+                "name": "EMAIL_ADDRESS_TOKEN"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "inspectConfig": {
+    "infoTypes": [
+      {
+        "name": "EMAIL_ADDRESS"
+      }
+    ]
+  }
+}

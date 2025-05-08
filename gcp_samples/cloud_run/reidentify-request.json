@@ -1,0 +1,43 @@
+{
+  "reidentifyConfig":{
+    "infoTypeTransformations":{
+      "transformations":[
+        {
+          "infoTypes":[
+            {
+              "name":"EMAIL_ADDRESS_TOKEN"
+            }
+          ],
+          "primitiveTransformation":{
+            "cryptoDeterministicConfig":{
+              "cryptoKey":{
+              "kmsWrapped": {
+                "cryptoKeyName": "projects/us-gcp-ame-con-ff12d-npd-1/locations/global/keyRings/keyring-dip/cryptoKeys/dlp-kms-key",
+                "wrappedKey": "CiQAyHYOXhnCOrF5mPdZMiRMXGCi72WrEBJdwk9qxLmQfOifPzUSSQBxGTtDrghgk/Pp1XsSAKRg6pezaJcMfi3iJV1451hUT32IE3KMHV7dkgZDtDv9lomXXaLfMuS3Dklh6pt+UuCJzZbWXp5cICo="
+              }
+            },
+              "surrogateInfoType":{
+                "name":"EMAIL_ADDRESS_TOKEN"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "inspectConfig":{
+    "customInfoTypes":[
+      {
+        "infoType":{
+          "name":"EMAIL_ADDRESS_TOKEN"
+        },
+        "surrogateType":{
+
+        }
+      }
+    ]
+  },
+  "item":{
+    "value": "My name is Alicia Abernathy, and my email address is EMAIL_ADDRESS_TOKEN(52):ARflRFew8+hv4L0rQ2vIbWGBj79BRInw8s4GGCxm3d/E+nnukEEh."
+  }
+}
