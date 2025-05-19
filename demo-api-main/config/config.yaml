@@ -2,18 +2,9 @@ app:
   name: demo-api
   description: "Demo API for testing"
   debug: True
-  port: 80
+  port: 8080
   version: 0.05
   author: Deloitte
-DLP_INFOTYPES:
-  - EMAIL_ADDRESS
-  - CREDIT_CARD_NUMBER
-  - GENERIC_ID
-  - IP_ADDRESS
-  - PHONE_NUMBER
-  - US_DRIVERS_LICENSE_NUMBER
-  - US_SOCIAL_SECURITY_NUMBER
-  - US_PASSPORT
 DEK: 
 DEID_WRAPPED_KEY: CiQAyHYOXhnCOrF5mPdZMiRMXGCi72WrEBJdwk9qxLmQfOifPzUSSQBxGTtDrghgk/Pp1XsSAKRg6pezaJcMfi3iJV1451hUT32IE3KMHV7dkgZDtDv9lomXXaLfMuS3Dklh6pt+UuCJzZbWXp5cICo=
-CRYPTO_KEY_NAME: projects/us-gcp-ame-con-ff12d-npd-1/locations/global/keyRings/keyring-dip/cryptoKeys/dlp-kms-key/cryptoKeyVersions/1
+CRYPTO_KEY_NAME: projects/us-gcp-ame-con-ff12d-npd-1/locations/global/keyRings/keyring-dip/cryptoKeys/dlp-kms-key

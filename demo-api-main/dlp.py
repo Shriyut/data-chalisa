@@ -6,12 +6,12 @@ config_filename = "config/config.yaml"
 with open(config_filename, "r") as config_file:
     app_config = yaml.load(config_file.read(), Loader=yaml.FullLoader)
 
-GCP_PROJECT = os.environ.get('GCP_PROJECT')
-LOGGING_LEVEL = os.environ.get('GCP_LOGGING_LEVEL')
-DLP_INFOTYPES = app_config['DLP_INFOTYPES']
+#GCP_PROJECT = os.environ.get('GCP_PROJECT')
+GCP_PROJECT = "us-gcp-ame-con-ff12d-npd-1"
+#LOGGING_LEVEL = os.environ.get('GCP_LOGGING_LEVEL')
 
 # Configure the basic logging level per the app_config
-logging.basicConfig(level=int(LOGGING_LEVEL))
+#logging.basicConfig(level=int(LOGGING_LEVEL))
 
 # === Helper Function for DLP Config ===
 def _get_crypto_replace_ffx_config(info_type_name):
@@ -39,7 +39,7 @@ def _get_primitive_transformation(info_type_name):
         crypto_replace_ffx_fpe_config=_get_crypto_replace_ffx_config(info_type_name)
     )
 
-def _get_infotype_transformations():
+def _get_infotype_transformations(dynamic_info_types):
     """Builds the list of transformations for specified INFO_TYPES."""
     return dlp_v2.InfoTypeTransformations(
         transformations=[
@@ -47,12 +47,12 @@ def _get_infotype_transformations():
                 info_types=[dlp_v2.InfoType(name=info_type_name)],
                 primitive_transformation=_get_primitive_transformation(info_type_name),
             )
-            for info_type_name in app_config['DLP_INFOTYPES']
+            for info_type_name in dynamic_info_types
         ]
     )
 
 # Inspect the input text for sensitive data and return findings
-def inspect_text(text):
+def inspect_text(text, dynamic_info_types):
     module = "{}.{}".format(__name__,inspect.currentframe().f_code.co_name)
     response = {
         "status": "success",
@@ -61,9 +61,9 @@ def inspect_text(text):
         "findings": [],
     }
     # dlp = google.cloud.dlp_v2.DlpServiceClient()
-    parent = "projects/{}".format(GCP_PROJECT)  
+    parent = "projects/{}".format(GCP_PROJECT)
     
-    info_types=[dlp_v2.InfoType(name=info_type) for info_type in app_config['DLP_INFOTYPES']]
+    info_types=[dlp_v2.InfoType(name=info_type) for info_type in dynamic_info_types]
     inspect_config = {
         "info_types": info_types,
         "include_quote": True
@@ -110,7 +110,7 @@ def inspect_text(text):
     return response
 
 # De-identify the input text based on the specified action
-def deidentify_data(input_data):
+def deidentify_data(input_data, dynamic_info_types):
     module = "{}.{}".format(__name__,inspect.currentframe().f_code.co_name)
     response = {
         "status": "success",
@@ -128,17 +128,17 @@ def deidentify_data(input_data):
         # Construct the Inspect and Deidentify Configs
         
         inspect_config = dlp_v2.InspectConfig(
-            info_types=[dlp_v2.InfoType(name=info_type) for info_type in app_config['DLP_INFOTYPES']],
+            info_types=[dlp_v2.InfoType(name=info_type) for info_type in dynamic_info_types],
             custom_info_types=[
             dlp_v2.CustomInfoType(
                 info_type=dlp_v2.InfoType(name=info_type_name),
                 surrogate_type=dlp_v2.CustomInfoType.SurrogateType()
             )
-            for info_type_name in app_config['DLP_INFOTYPES']
+            for info_type_name in dynamic_info_types
             ]
         )
         deidentify_config = dlp_v2.DeidentifyConfig(
-            info_type_transformations=_get_infotype_transformations(),
+            info_type_transformations=_get_infotype_transformations(dynamic_info_types),
             transformation_error_handling=dlp_v2.TransformationErrorHandling(
                 leave_untransformed=dlp_v2.TransformationErrorHandling.LeaveUntransformed()
             )
@@ -169,7 +169,7 @@ def deidentify_data(input_data):
 
 
 # Re-identify the input text based on the specified action
-def reidentify_data(input_data):
+def reidentify_data(input_data, dynamic_info_types):
     module = "{}.{}".format(__name__, inspect.currentframe().f_code.co_name)
     response = {
         "status": "success",
@@ -186,17 +186,17 @@ def reidentify_data(input_data):
 
         # Construct the Inspect and Reidentify Configs
         inspect_config = dlp_v2.InspectConfig(
-            info_types=[dlp_v2.InfoType(name=info_type) for info_type in app_config['DLP_INFOTYPES']],
+            info_types=[dlp_v2.InfoType(name=info_type) for info_type in dynamic_info_types],
             custom_info_types=[
             dlp_v2.CustomInfoType(
                 info_type=dlp_v2.InfoType(name=info_type_name),
                 surrogate_type=dlp_v2.CustomInfoType.SurrogateType()
             )
-            for info_type_name in app_config['DLP_INFOTYPES']
+            for info_type_name in dynamic_info_types
             ]
         )
         deidentify_config = dlp_v2.DeidentifyConfig(
-            info_type_transformations=_get_infotype_transformations(),
+            info_type_transformations=_get_infotype_transformations(dynamic_info_types),
             transformation_error_handling=dlp_v2.TransformationErrorHandling(
                 leave_untransformed=dlp_v2.TransformationErrorHandling.LeaveUntransformed()
             )

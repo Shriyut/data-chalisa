@@ -1,3 +1,5 @@
+from crypt import methods
+
 from flask import Flask, request, jsonify, Response
 from flask_restful import Resource, Api
 import os, requests, socket, json, yaml, logging
@@ -23,11 +25,12 @@ config_filename = "config/config.yaml"
 with open(config_filename, "r") as config_file:
     config = yaml.load(config_file.read(), Loader=yaml.FullLoader)
 
-GCP_PROJECT = os.environ.get('GCP_PROJECT')
-GCP_LOGGING_LEVEL = os.environ.get('GCP_LOGGING_LEVEL')
+#GCP_PROJECT = os.environ.get('GCP_PROJECT')
+GCP_PROJECT = "us-gcp-ame-con-ff12d-npd-1"
+#GCP_LOGGING_LEVEL = os.environ.get('GCP_LOGGING_LEVEL')
 
 # Configure the basic logging level per the config
-logging.basicConfig(level=int(GCP_LOGGING_LEVEL))
+#logging.basicConfig(level=int(GCP_LOGGING_LEVEL))
 
 # Create an instance of Flask
 app = Flask(__name__)
@@ -126,13 +129,16 @@ class DLPInspect(Resource):
         """
         Receives JSON, inspects specified infoTypes using FFX, returns JSON.
         """
+        # Extract runtime parameters
+        info_types = request.args.get('infotypes', default='', type=str).split(',')
+
         data = {
             "findings": [],
             'message': "",
             'http_status_code': 200
         }
 
-        output = dlp.inspect_text(request.data)
+        output = dlp.inspect_text(request.data, info_types)
         data['findings'] = output['findings']
         data['message'] = output['message']
         data['http_status_code'] = output['http_status_code']
@@ -141,6 +147,7 @@ class DLPInspect(Resource):
         response = Response()
         response = jsonify(data)
         response.status_code = data['http_status_code']
+        #response.headers.add("Test Username", username)
         return response
 
 # DLP De-Identification
@@ -149,13 +156,16 @@ class DLPDeIdentify(Resource):
         """
         Receives JSON, de-identifies specified infoTypes using FFX, returns JSON.
         """
+
+        # Extract runtime parameters
+        info_types = request.args.get('infotypes', default='', type=str).split(',')
         data = {
             "deidentified_text": "",
             'message': "",
             'http_status_code': 200
         }
 
-        output = dlp.deidentify_data(request.data)
+        output = dlp.deidentify_data(request.data, info_types)
         data['deidentified_text'] = output['deidentified_text']
         data['message'] = output['message']
         data['http_status_code'] = output['http_status_code']
@@ -173,13 +183,16 @@ class DLPReIdentify(Resource):
         """
         Receives JSON, de-identifies specified infoTypes using FFX, returns JSON.
         """
+
+        # Extract runtime parameters
+        info_types = request.args.get('infotypes', default='', type=str).split(',')
         data = {
             "reidentified_text": "",
             'message': "",
             'http_status_code': 200
         }
 
-        output = dlp.reidentify_data(request.data)
+        output = dlp.reidentify_data(request.data, info_types)
         data['reidentified_text'] = output['reidentified_text']
         data['message'] = output['message']
         data['http_status_code'] = output['http_status_code']
@@ -215,6 +228,6 @@ def not_found(e):
     return response
 
 if __name__ == "__main__":
-    port="80"
+    port="8080"
     print("Starting api-template Flask API on Port {}...".format(port))
     app.run(debug=True, host='0.0.0.0',port=port)

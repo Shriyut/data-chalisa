@@ -10,6 +10,9 @@ gcloud run deploy sample-script \
        --platform managed \
        --region us-east4
 
+
+gcloud run deploy sample-script --image gcr.io/us-gcp-ame-con-ff12d-npd-1/sample-script:latest --platform managed --region us-east4 --set-env-vars test=value,newtest=newvalue
+
 ### Trigger the cloud run service
 curl -H "Authorization: bearer $(gcloud auth print-identity-token)" https://sample-script-993650900751.us-east4.run.app
 
