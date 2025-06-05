@@ -27,7 +27,7 @@ class GenerateData(beam.DoFn):
 class AssignWindowId(beam.DoFn):
     def process(self, element, window=beam.DoFn.WindowParam):
         window_start_time = window.start.to_utc_datetime()
-        window_id = window_start_time.strftime('%Y%m%d%H%M%S%f')
+        window_id = window_start_time.strftime('%Y%m%d%H%M%S')
         yield window_id, element
 
 
