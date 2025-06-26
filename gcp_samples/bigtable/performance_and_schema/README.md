@@ -33,3 +33,36 @@ If you're running a performance test for an application that depends on Bigtable
 - Before you test, run a heavy pre-test for several minutes. This step gives Bigtable a chance to balance data across your nodes based on the access patterns it observes.
 - Run your test for at least 10 minutes. This step lets Bigtable further optimize your data, and it helps ensure that you will test reads from disk as well as cached reads from memory.
 
+A table belongs to an instance, not to a cluster or node. If you have an instance with more than one cluster, you are using replication. This means you can't assign a table to an individual cluster or create unique garbage collection policies for each cluster in an instance. You also can't make each cluster store a different set of data in the same table.
+
+Each cluster belongs to a single Bigtable instance, and an instance can have clusters in up to 8 regions. Each cluster is located in a single zone.
+
+Bigtable instances that have only 1 cluster don't use replication. If you add a second cluster to an instance, Bigtable automatically starts replicating your data by keeping separate copies of the data in each of the clusters' zones and synchronizing updates between the copies. You can choose which cluster your applications connect to, which makes it possible to isolate different types of traffic from one another. You can also let Bigtable balance traffic between clusters. If a cluster becomes unavailable, you can fail over from one cluster to another.
+
+Each cluster in an instance has 1 or more nodes, which are compute resources that Bigtable uses to manage your data.
+
+Behind the scenes, Bigtable splits all of the data in a table into separate tablets. Tablets are stored on disk, separate from the nodes but in the same zone as the nodes. A tablet is associated with a single node.
+
+Each node is responsible for:
+
+- Keeping track of specific tablets on disk.
+- Handling incoming reads and writes for its tablets.
+- Performing maintenance tasks on its tablets, such as periodic compactions.
+
+The cost savings from HDD are minimal, relative to the cost of the nodes in your Bigtable cluster, unless you're storing large amounts of data. For this reason, as a rule of thumb, you shouldn't consider using HDD storage unless you're storing at least 10 TB of data and your workload is not latency-sensitive.
+
+One potential drawback of SSD storage is that it requires more nodes in your clusters based on the amount of data that you store. In practice, though, you might need those extra nodes so that your clusters can keep up with incoming traffic, not only to support the amount of data that you're storing.
+
+### Use cases for HDD storage
+HDD storage is suitable for use cases that meet all of the following criteria:
+
+- You expect to store at least 10 TB of data.
+- You will not use the data to back a user-facing or latency-sensitive application.
+- You don't plan to enable 2x node scaling.
+- Your workload falls into one of the following categories:
+
+  - Batch workloads with scans and writes, and no more than occasional random reads of a small number of rows or point reads.
+  - Data archival, where you write large amounts of data and rarely read that data.
+
+Application profiles, or app profiles, control how your applications connect to an instance that uses replication. Every instance with more than 1 cluster has its own default app profile. You can also create many different custom app profiles for each instance, using a different app profile for each kind of application that you run.
+
