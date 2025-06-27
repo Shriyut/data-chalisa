@@ -1,0 +1,10 @@
+{
+    "key1": "value1",
+    "key2": "value2",
+    "column_family_mapping": {
+        "column1": "family1",
+        "column2": "family2"
+    },
+    "hogan_parameters": ["dinNumber", "serial_code"]
+
+}
