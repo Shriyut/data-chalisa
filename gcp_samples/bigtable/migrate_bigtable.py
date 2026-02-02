@@ -7,7 +7,6 @@ DEST_INSTANCE_ID = "sj-test-instance"
 TABLE_ID = "bai_refcd_by_tran_mapping_cd"
 
 def main():
-    # Set up Bigtable clients
     src_client = bigtable.Client(project=PROJECT_ID, admin=True)
     dest_client = bigtable.Client(project=PROJECT_ID, admin=True)
 
@@ -17,7 +16,6 @@ def main():
     src_table = src_instance.table(TABLE_ID)
     dest_table = dest_instance.table(TABLE_ID)
 
-    # Ensure destination table exists with correct column families
     if not dest_table.exists():
         print("Creating destination table...")
         column_families = {
@@ -26,7 +24,6 @@ def main():
         }
         dest_table.create(column_families=column_families)
 
-    # Read and write rows
     print("Copying rows...")
     rows = src_table.read_rows()
     batch = dest_table.mutations_batcher()
@@ -46,6 +43,7 @@ def main():
 
     batch.flush()
     print(f"Copy complete. Total rows copied: {row_count}")
+
 
 if __name__ == "__main__":
     main()
