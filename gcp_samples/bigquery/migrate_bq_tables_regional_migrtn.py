@@ -1,7 +1,7 @@
 import pandas as pd
 from google.cloud import bigquery
 
-project_id = "us-gcp-ame-con-ff12d-npd-1"
+project_id = ""
 src_dataset = "audit_dataset"
 dest_dataset = "sj_audit_dataset"
 tables = [
