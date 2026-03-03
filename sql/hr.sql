@@ -1,3 +1,145 @@
+-- get highest, lowest, total, and avg salary of employee
+
+SELECT
+	department_id,
+	MAX(salary) AS highest,
+	MIN(salary) AS lowest,
+	SUM(salary) AS total,
+	AVG(salary) AS average
+FROM employees
+GROUP BY department_id
+
+-- diff b/w highest and lowest salary per job_id
+
+SELECT
+	job_id,
+	MAX(salary) OVER (PARTITION BY job_id) - MIN(salary) OVER (PARTITION BY job_id)
+FROM employees
+-- above query gives results for all rows
+--  below query is the correct approach
+SELECT
+	job_id,
+	MIN(salary) as min_sal,
+	MAX(salary) as max_sal,
+	MAX(salary) - MIN(salary)
+FROM employees
+GROUP BY job_id
+
+-- Get lowest paid salary for each manager
+
+SELECT
+	MIN(salary),
+	manager_id
+FROM employees
+GROUP BY manager_id
+ORDER BY 1 DESC
+
+-- Avg salary for each department with more than 10 employees
+
+SELECT
+	AVG(salary) AS avg_sal,
+	department_id
+FROM employees
+GROUP BY department_id
+HAVING COUNT(*) > 10
+
+-- Avg salary for each post excluding programmer
+
+SELECT
+	AVG(salary) AS avg_salary,
+	job_id
+FROM employees
+WHERE job_id <> 'IT_PROG'
+GROUP BY job_id
+
+-- Maximum salary for each post where salary is at or above $5000
+
+SELECT
+	job_id,
+	MAX(salary)
+FROM employees
+GROUP BY job_id
+HAVING MAX(salary) >= 5000
+
+-- COmpute 15% of salary for all employees
+
+SELECT
+	SUM(salary) * 0.15 AS "15_pct_Salary"
+FROM employees
+
+-- List all employee IDs  within each job_id group
+
+SELECT
+	job_id,
+	ARRAY_AGG(employee_id)
+FROM employees
+GROUP BY job_id
+
+-- Discard characters from employees email address
+
+SELECT
+	 first_name,
+	 email,
+	 length(email),
+	 substr(email,1,length(email) - 4) AS "substr"
+FROM employees
+
+--  list all employees with first_name starting with A,C,M
+
+SELECT
+	first_name,
+	last_name
+FROM employees
+WHERE
+	first_name LIKE 'A%'
+	OR first_name LIKE 'C%'
+	OR first_name LIKE 'M%'
+
+-- Get unique designations in employees table
+
+SELECT
+	-- DISTINCT job_id,
+	COUNT(DISTINCT job_id) AS unique_Designations
+FROM employees
+-- WHERE department_id = ''
+
+-- find C in last_name at 3rd or greater position
+
+SELECT
+	first_name,
+	last_name,
+	POSITION('C' IN last_name)
+FROM employees
+WHERE POSITION('C' IN last_name) > 2
+
+-- update 123 with 888 in phone number
+
+UPDATE employees
+SET phone_number = REPLACE(phone_number, '123', '888')
+WHERE phone_number LIKE '%123%'
+
+--  get monthly salary for each employee
+SELECT
+	first_name,
+	last_name,
+	ROUND(salary/12,2) AS monthly_salary
+FROM employees
+
+-- Calculate average salary with total number of employees
+
+SELECT
+	AVG(salary),
+	COUNT(*	)
+FROM employees
+
+-- FInd all employees whose names contians exactly six characters
+
+SELECT
+	first_name,
+	last_name
+FROM employees
+WHERE last_name LIKE '______'
+
 -- select first name, last name, salary, and department names for all employees
 -- then use row number to order by salary
 
