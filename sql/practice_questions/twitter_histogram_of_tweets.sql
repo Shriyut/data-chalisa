@@ -27,7 +27,7 @@ SELECT
   COUNT(*) AS tweet_bucket,
   user_id
 FROM tweets
-WHERE EXTRACT(YEAR FROM tweet_date) = '2022'
+WHERE EXTRACT(YEAR FROM tweet_date) = '2022' -- implicit casting eeds to be performed better to use 2022 without quotes
 GROUP BY user_id
 )
 
@@ -36,5 +36,22 @@ tweet_bucket,
 COUNT(*) AS users_num
 FROM data_s
 GROUP BY tweet_bucket
+
+-- more optimized approach
+
+SELECT tweet_count AS tweet_bucket,
+       COUNT(*)    AS users_num
+FROM (
+    SELECT user_id,
+           COUNT(*) AS tweet_count
+    FROM tweets
+    WHERE tweet_date >= '2022-01-01'
+      AND tweet_date  < '2023-01-01'
+    GROUP BY user_id
+) AS tweet_data
+GROUP BY tweet_count
+ORDER BY tweet_bucket;
+
+-- Extract need sto be performed on each row and benefits of indexing would be ignored, range scan would only process 1 year of data
 
 -- Try to solve this using joins

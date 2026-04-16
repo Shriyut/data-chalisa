@@ -31,3 +31,23 @@ FROM posts
 WHERE EXTRACT('year' FROM post_date::DATE) = 2021
 GROUP BY user_id
 HAVING COUNT(post_id) > 1
+
+-- optimized solution
+
+SELECT
+  user_id,
+  MAX(post_date)::DATE - MIN(post_date)::DATE AS days_between
+FROM posts
+WHERE post_date >= '2021-01-01' AND post_date < '2022-01-01'
+GROUP BY user_id
+HAVING COUNT(post_id) > 1;
+
+-- window function solution
+
+SELECT DISTINCT
+  user_id,
+  MAX(post_date) OVER (PARTITION BY user_id)::DATE - MIN(post_date) OVER (PARTITION BY user_id)::DATE AS days_between
+FROM posts
+WHERE post_date >= '2021-01-01' AND post_date < '2022-01-01'
+QUALIFY COUNT(post_id) OVER (PARTITION BY user_id) > 1  -- QUALIFY is not supported in postgresql but supported in bigquery
+ORDER BY user_id;

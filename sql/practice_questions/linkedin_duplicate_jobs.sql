@@ -37,4 +37,13 @@ SELECT
 FROM duplicate_jobs
 WHERE job_count > 1
 
+WITH firms_with_duplicate_jobs AS (
+  SELECT company_id
+  FROM job_listings
+  GROUP BY company_id, title, description
+  HAVING COUNT(*) > 1
+)
+SELECT COUNT(DISTINCT company_id) AS duplicate_companies
+FROM firms_with_duplicate_jobs;
+
 -- compare this approach with another solution using self join to solve this problem

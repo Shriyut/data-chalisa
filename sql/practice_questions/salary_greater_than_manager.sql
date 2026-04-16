@@ -34,5 +34,21 @@ WHERE salary > (
   WHERE employee_id = e.manager_id
 );
 
--- this problem can be solved using inner join as well
+-- Critical Problems
+--IssueImpactCorrelated SubqueryConceptually executes the inner query once per row = ~1 billion subquery executions
+--No explicit index guaranteeEach subquery does a lookup on employee_id — without an index,
+--each is a full table scanNested Loop behaviorEffectively O(N²) in the worst case
+
+-- this problem can be solved using inner join as well - better approach
+
+SELECT
+    e.employee_id,
+    e.name
+FROM employee e
+INNER JOIN employee m
+    ON e.manager_id = m.employee_id
+WHERE e.salary > m.salary;
+
+-- try to solve this using windowing functions
+
 -- analyze what would be a better approach for a table with more than a billion records

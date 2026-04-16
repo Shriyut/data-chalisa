@@ -59,3 +59,17 @@ GROUP BY city
 ORDER BY total_orders DESC
 LIMIT 3
 
+-- more optimized solution
+
+SELECT
+  u.city AS city,
+  count(*) AS total_orders
+FROM trades t
+INNER JOIN users u
+ON t.user_id = u.user_id
+AND t.status = 'Completed'
+GROUP BY u.city
+ORDER BY total_orders DESC
+LIMIT 3
+
+

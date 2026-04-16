@@ -28,3 +28,46 @@ SELECT
     END) AS final_balance
   FROM transactions
   GROUP BY account_id
+
+
+SELECT
+  account_id,
+  SUM(
+    CASE
+      WHEN transaction_type = 'Deposit' THEN amount
+      WHEN transaction_type = 'Withdrawal' THEN -amount
+    END
+  ) AS final_balance
+FROM transactions
+GROUP BY account_id;
+
+
+-- If certain accounts have disproportionately more transactions (data skew):
+-- Two-phase aggregation to handle skew
+SELECT
+  account_id,
+  SUM(partial_balance) AS final_balance
+FROM (
+  SELECT
+    account_id,
+    SUM(IF(transaction_type = 'Deposit', amount, -amount)) AS partial_balance
+  FROM `project.dataset.transactions`
+  GROUP BY account_id, MOD(transaction_id, 100)  -- break hot keys into 100 buckets
+)
+GROUP BY account_id;
+
+-- For billion-row tables, storing 'Deposit'/'Withdrawal' as strings is wasteful:
+
+-- Better: Use integer encoding
+-- 1 = Deposit, -1 = Withdrawal (acts as multiplier)
+SELECT
+  account_id,
+  SUM(amount * transaction_sign) AS final_balance
+FROM `project.dataset.transactions_optimized`
+GROUP BY account_id;
+
+--This reduces:
+--
+--Storage: STRING → INT64 saves ~10 bytes per row × 1B = ~10GB savings
+--Compute: No string comparison, just multiplication, which is faster at scale.
+
